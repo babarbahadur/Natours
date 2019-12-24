@@ -2,12 +2,30 @@ const Tour = require('./../model/tourModel')
 
 exports.getAllTours = async (req, res) => {
     try {
+        //REMOVING SORT, PAGING ETC
         const querryObj = {...req.query}
         const excludedFields = ['page', 'sort', 'limit', 'fields']
         excludedFields.forEach(element => {
             delete querryObj[element]
         });
-        const tours = await Tour.find(querryObj)
+
+        //FILTERING
+        let filterQuerry = JSON.stringify(querryObj)
+        filterQuerry = filterQuerry.replace(/\b(lt|lte|gt|gte)\b/g, match => `$${match}`)
+        console.log(filterQuerry, 'This is fucking filter querry')
+        
+
+        let tours = await Tour.find(JSON.parse(filterQuerry))
+
+        //SORTING
+        // if(req.query.sort) {
+        //     const sortBy = req.query.sort.split(',').join(' ');
+        //     tours = tours.sort(sortBy)
+        // }
+        //  else {
+            // tours = tours.sort('price')
+        // }
+
         res
         .status(200)
         .json({
