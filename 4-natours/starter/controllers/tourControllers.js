@@ -110,9 +110,9 @@ exports.tourStats = async (req, res) => {
             }, {
                 $sort: { tourNumber: 1}
             },
-            {
-                $match: {_id: {$ne: 'EASY'}}
-            }
+            // {
+            //     $match: {_id: {$ne: 'EASY'}}
+            // }
         ]);
 
         res
