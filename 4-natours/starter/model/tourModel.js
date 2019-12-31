@@ -78,7 +78,7 @@ tourSchema.virtual('durationsWeek').get(function (){
 
 tourSchema.pre('save', function(next) {
     this.slug = slugify(this.name, {lower: true})
-    console.log(this, 'This is document');
+    // console.log(this, 'This is document');
     next();
 })
 

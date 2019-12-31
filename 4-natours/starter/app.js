@@ -29,11 +29,11 @@ app.use(express.static(__dirname + '/public'))
 
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
-    app.use((req, res, next) => {
-        console.log('Hello from middleware 😁')
-        req.requestTime = new Date().toISOString()
-        next()
-    })
+    // app.use((req, res, next) => {
+    //     console.log('Hello from middleware 😁')
+    //     req.requestTime = new Date().toISOString()
+    //     next()
+    // })
 }
 
 
@@ -54,6 +54,8 @@ app.all('*',  (req, res, next) => {
 })
 
 app.use(GlobalErrorHandler)
+
+
 
 module.exports = app
 
