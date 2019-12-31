@@ -10,7 +10,6 @@ exports.getAllTours = async (req, res) => {
         .paginate();
         const tours = await features.query;
 
-
         res
         .status(200)
         .json({

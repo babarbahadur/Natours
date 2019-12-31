@@ -18,6 +18,9 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+
+const AppError = require('./utils/appError')
+const GlobalErrorHandler = require('./controllers/errorController')
 const tourRouter = require('./routes/tourRoutes')
 const userRouter = require('./routes/userRoutes')
 
@@ -37,6 +40,20 @@ if(process.env.NODE_ENV === 'development') {
 
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
+
+app.all('*',  (req, res, next) => {
+ 
+    // const err = new Error(`${req.url} is not a valid`)
+    // err.statusCode = 400
+    // err.status = 'Fail'
+    // next(err)
+
+    const err = new AppError(`${req.url} is not a valid`, 400)
+    next(err)
+
+})
+
+app.use(GlobalErrorHandler)
 
 module.exports = app
 
