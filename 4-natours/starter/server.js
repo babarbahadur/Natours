@@ -1,6 +1,13 @@
 const dotenv = require('dotenv')
 var mongodb = require('mongodb');
 const mongoose = require('mongoose')
+
+process.on('uncaughtException', err => {
+  // console.log(err.name, err.message)
+  console.log(err)
+  process.exit(1)
+})
+
 dotenv.config({path: './config.env'})
 const app = require('./app')
 
@@ -15,7 +22,22 @@ mongoose
   })
   .then(() => console.log('DB connection successful ❤️!'));
 
+const port = process.env.PORT || 3000
 
+// console.log(process.env)
+const server = app.listen(port, () => {
+  console.log('Server listening')
+})
+
+process.on('unhandledRejection', err => {
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! 💥 Shutting down..');
+
+  server.close( () => {
+    //0 means success and 1 means failed
+    process.exit(1)
+  })
+})
 
 // const newTour = Tour({
 //     name: 'Main Coder',
@@ -41,9 +63,3 @@ mongoose
 
 
 
-const port = process.env.PORT || 3000
-
-// console.log(process.env)
-app.listen(port, () => {
-    console.log('Server listening')
-})

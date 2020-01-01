@@ -1,7 +1,7 @@
 const Tour = require('./../model/tourModel')
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync.js')
-const AppError = require('./errorController')
+const AppError = require('./../utils/appError')
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Tour.find(), req.query)
@@ -11,6 +11,9 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     .paginate();
     const tours = await features.query;
 
+    if(!tours) {
+        return next(new AppError('No tour found', 404))
+    } 
     res
     .status(200)
     .json({
@@ -22,24 +25,22 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.getTour = async (req, res, next) => {
-    try {
-        const selectedtour = await Tour.findById(req.params.id)
-        res
-        .status(200)
-        .json({
-            message: 'Success',
-            data: {
-                selectedtour
-            }
-        })
-    }
-    catch {
-        res.status(404).json({
-            message: 'Error'
-        })
-    }
-}
+exports.getTour = catchAsync(async (req, res, next) => {
+    const selectedtour = await Tour.findById(req.params.id)
+
+    if(!selectedtour) {
+        return next(new AppError('No tour found with that ID', 404))
+    } 
+
+    res
+    .status(200)
+    .json({
+        message: 'Success',
+        data: {
+            selectedtour
+        }
+    })
+})
 
 exports.postTour = catchAsync(async (req, res, next) => {
     const newTour = await Tour.create(req.body)
@@ -51,6 +52,11 @@ exports.postTour = catchAsync(async (req, res, next) => {
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
     const tour = await Tour.findByIdAndDelete(req.params.id)
+
+    if(!tour) {
+        return next(new AppError('No tour found', 404))
+    } 
+    
     res
     .status(200)
     .json({
@@ -63,6 +69,11 @@ exports.patchTour = catchAsync(async (req, res, next) => {
         new: true,
         runValidators: true
     })
+
+    if(!tour) {
+        return next(new AppError('No tour found', 404))
+    } 
+
     res
     .status(200)
     .json({
