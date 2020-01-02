@@ -19,6 +19,18 @@ handleValidationsError = err => {
     return new AppError(message, 400);
 }
 
+handleForgedTokenError = () => {
+    return new AppError('Provided token is not a valid token', 401)
+}
+
+handleExpiredTokenError = () => {
+    return new AppError('Your token has expired! Please login again', 401)
+}
+
+handleHeaderError = () => {
+    return new AppError('Header not provided', 400)
+}
+
 const developmentError = (err, res) => {
     res.status(err.statusCode).json({
         status: err.status,
@@ -47,7 +59,6 @@ const productionError = (err, res) => {
 }
 
 
-
 module.exports = (err, req, res, next) => {
     // console.log(err.stack)
     err.statusCode = err.statusCode || 500
@@ -61,6 +72,9 @@ module.exports = (err, req, res, next) => {
         if(err.name === 'CastError') error = handleCastErrorDB(error)
         if(err.code === 11000) error = handleUniqueKeyErrorDB(error)
         if(err.name === "ValidationError") error = handleValidationsError(error)
+        if(err.name === "JsonWebTokenError") error = handleForgedTokenError()
+        if(err.name === "TokenExpiredError") error = handleExpiredTokenError()
+        if(err.customError === "header") error = handleHeaderError()
 
         productionError(error, res)
     }
