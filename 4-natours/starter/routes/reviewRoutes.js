@@ -6,7 +6,7 @@ const {protect, restrictTo} = require('../controllers/authController')
 router
     .route('/')
     .get(protect, restrictTo('admin'), getAllReviews)
-    .post(protect, restrictTo('user'), createReview)
+    // .post(protect, restrictTo('user'), createReview)
 
 router
     .route('/:id')
