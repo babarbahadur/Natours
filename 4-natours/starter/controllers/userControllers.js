@@ -2,6 +2,7 @@ const User = require('./../model/userModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const Factory = require('./factoryController')
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {}
@@ -9,6 +10,11 @@ const filterObj = (obj, ...allowedFields) => {
     if(allowedFields.includes(key)) newObj[key] = obj[key]
   });
   return newObj;
+}
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id
+  next()
 }
 
 exports.updateMe = catchAsync(async (req, res, next) => {
@@ -39,43 +45,13 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   
 })
 
+exports.getAllUsers = Factory.getAll(User)
 
-exports.getAllUsers = catchAsync( async(req, res) => {
-  const features = new APIFeatures(User.find(), req.query)
-  .filter()
-  .sort()
-  .limitFields()
-  .paginate();
-  const users = await features.query;
+exports.deleteUser = Factory.deleteOne(User)
 
-  if(!users) {
-      return next(new AppError('No user found', 404))
-  } 
-  res
-  .status(200)
-  .json({
-      message: 'Success', 
-      length: users.length, 
-      data: {
-          users
-      }
-  })
-})
-
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
-  });
-};
+exports.getUser = Factory.getOne(User)
 
 exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
-  });
-};
-exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined!'

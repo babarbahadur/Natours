@@ -2,45 +2,11 @@ const Tour = require('./../model/tourModel')
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync.js')
 const AppError = require('./../utils/appError')
+const Factory = require('./factoryController')
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-    const tours = await features.query;
+exports.getAllTours = Factory.getAll(Tour)
 
-    if(!tours) {
-        return next(new AppError('No tour found', 404))
-    } 
-    res
-    .status(200)
-    .json({
-        message: 'Success', 
-        length: tours.length, 
-        data: {
-            tours: tours
-        }
-    })
-})
-
-exports.getTour = catchAsync(async (req, res, next) => {
-    const selectedtour = await Tour.findById(req.params.id).populate('reviews')
-
-    if(!selectedtour) {
-        return next(new AppError('No tour found with that ID', 404))
-    } 
-
-    res
-    .status(200)
-    .json({
-        message: 'Success',
-        data: {
-            selectedtour
-        }
-    })
-})
+exports.getTour = Factory.getOne(Tour, { path: 'reviews'})
 
 exports.postTour = catchAsync(async (req, res, next) => {
     const newTour = await Tour.create(req.body)
@@ -50,39 +16,8 @@ exports.postTour = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndDelete(req.params.id)
-
-    if(!tour) {
-        return next(new AppError('No tour found', 404))
-    } 
-    
-    res
-    .status(204)
-    .json({
-        message: 'Data deleted sucessfully',
-    })
-})
-
-exports.patchTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    })
-
-    if(!tour) {
-        return next(new AppError('No tour found', 404))
-    } 
-
-    res
-    .status(200)
-    .json({
-        message: 'Data patch sucessfully!',
-        data: {
-            tour
-        }
-    })
-})
+exports.deleteTour = Factory.deleteOne(Tour)
+exports.patchTour = Factory.patchOne(Tour)
 
 exports.tourStats = catchAsync(async (req, res, next) => {
     const stats = await Tour.aggregate([
@@ -156,34 +91,3 @@ exports.yearStats = catchAsync(async (req, res, next) => {
         }
     })
 })
-
-// exports.deleteTour =  async (req, res) => {
-//     const id = req.params.id * 1
-
-//     const tour = tours.find( el => {
-//         if(id === el.id) return el
-//     })
-    
-//     if(!tour) return res.status(404).json({status: 404, message: 'Tour not found'})
-
-//     const finalTour =[];
-//     const newTour = tours.map(el => {
-//         if(el.id != tour.id) {
-//             return finalTour.push(el)
-//         }
-//     })
-
-//     fs.writeFile(__dirname + '/../dev-data/data/tours-simple.json', JSON.stringify(finalTour), (err, data) => {
-//         if(err) console.log('There is an error writing into the file')
-//         console.log('Data writing successfully!')
-//     })
-
-//     res
-//     .status(200)
-//     .json({
-//         message: 'Data deleted sucessfully',
-//         data: {
-//             finalTour
-//         }
-//     })
-// }
