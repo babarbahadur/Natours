@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {getAllTours, postTour, getTour, deleteTour, patchTour, tourStats, yearStats} = require('../controllers/tourControllers')
+const {getAllTours, postTour, getTour, deleteTour, patchTour, tourStats, yearStats, getToursWithin} = require('../controllers/tourControllers')
 const {getReview, createReview, deleteReview, patchReview } = require('../controllers/reviewController')
 const reviewRoute = require('../routes/reviewRoutes')
 const {protect, restrictTo} = require('../controllers/authController')
@@ -27,6 +27,10 @@ router
     .get(getTour)
     .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour)
     .patch(patchTour)
+
+router
+    .route('/tours-within/:distance/center/:latlan/unit/:unit')
+    .get(getToursWithin)
 
 //Reviews
 // router
