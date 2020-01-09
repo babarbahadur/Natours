@@ -31,8 +31,9 @@ exports.signup = catchAsync(async (req, res, next) => {
       email: req.body.email,
       password: req.body.password,
       confirmPassword: req.body.confirmPassword,
-      passwordChangedAt: Date.now(),
-      role: req.body.role
+      // passwordChangedAt: Date.now(),
+      // role: req.body.role,
+      // picture: "Coding.jpg"
     });
 
     createSendToken(newUser, 201, res)
@@ -44,7 +45,7 @@ exports.login = catchAsync(async (req, res, next) => {
     if(!email || !password) {
         return next(new AppError('Email or password not provided', 400));
     }
-    const user = await User.findOne({email}).select('+password')
+    const user = await User.findOne({email}).select('+password +picture')
 
     if(!user || !(await user.correctPassword(password, user.password))) {
         return next(new AppError('Wrong email or password', 401))

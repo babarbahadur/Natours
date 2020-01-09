@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {getMe, updateMe, deleteMe, getAllUsers, getUser, deleteUser, patchUser} = require('../controllers/userControllers')
+const {getMe, uploadUserPhoto, updateMe, deleteMe, getAllUsers, getUser, deleteUser, patchUser} = require('../controllers/userControllers')
 const {signup, login, resetPassword, forgotPassword, protect, updatePassword} = require('../controllers/authController')
 
 router
@@ -29,7 +29,7 @@ router
 
 router
     .route('/updateMe')
-    .patch(protect, updateMe)
+    .patch(protect, uploadUserPhoto, updateMe)
 
  router
     .route('/deleteMe')
