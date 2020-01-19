@@ -11,8 +11,8 @@ process.on('uncaughtException', err => {
 dotenv.config({path: './config.env'})
 const app = require('./app')
 
-const local = process.env.DATABASE_LOCAL
-const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASSWORD)
+// const local = process.env.DATABASE_LOCAL
+// const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASSWORD)
 
 mongoose
   .connect("mongodb://babar_bahadur:babar1996@natours-app-shard-00-00-ybksz.mongodb.net:27017,natours-app-shard-00-01-ybksz.mongodb.net:27017,natours-app-shard-00-02-ybksz.mongodb.net:27017/natours?ssl=true&replicaSet=natours-app-shard-0&authSource=admin&retryWrites=true", {
