@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean')
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression')
 
 const AppError = require('./utils/appError')
 const GlobalErrorHandler = require('./controllers/errorController')
@@ -46,6 +47,15 @@ app.use(hpp({
     ]
 }))
 
+app.use(compression())
+
+app.use((req, res, next) => {
+    // console.log('Hello from middleware 😁')
+    req.requestTime = new Date().toISOString()
+    console.log(req.cookies, 'These are cookies')
+    next()
+})
+
 //Middleware
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
@@ -67,6 +77,7 @@ app.use("/api/v1/users/login", apiLimiter);
 app.use(express.json({ limit: '10kb'}))
 
 app.use(cookieParser());
+app.enable('trust proxy');
 
 
 
