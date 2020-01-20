@@ -77,6 +77,7 @@ app.use("/api/v1/users/login", apiLimiter);
 app.use(express.json({ limit: '10kb'}))
 
 app.use(cookieParser());
+app.enable('trust proxy');
 
 
 
